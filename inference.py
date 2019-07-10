@@ -97,6 +97,6 @@ for file_name in files:
 	output = nib.Nifti1Image(output, affine=input_aff)
 
 	new_file_name = "test-segmentation-" + file_name.split("-")[-1]
-	print new_file_name
+	print(new_file_name)
 	
 	nib.save(output, os.path.join(result_folder, new_file_name))

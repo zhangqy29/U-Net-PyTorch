@@ -14,9 +14,9 @@ class LiverDataSet(torch.utils.data.Dataset):
         self.directory = directory
         self.data_files = os.listdir(directory)
 
-        def get_type(s): return s[:1]
-        def get_item(s): return int(s.split("_")[1].split(".")[0])
-        def get_patient(s): return int(s.split("-")[1].split("_")[0])
+        def get_type(s): return s[:1]                                #volume   segmentation
+        def get_item(s): return int(s.split("_")[1].split(".")[0])   #层数
+        def get_patient(s): return int(s.split("-")[1].split("_")[0]) 
 
         self.data_files.sort(key = lambda x: (get_type(x), get_patient(x), get_item(x)))
         self.data_files = zip(self.data_files[len(self.data_files)/2:], self.data_files[:len(self.data_files)/2])
@@ -94,7 +94,8 @@ def load_file(data_file, directory, augment):
 def load_file_context(data_files, idx, context, directory, augment):
 
     # check whether all inputs need to be augmented
-    if augment and np.random.rand() > 0.5: augment = False
+    if augment and np.random.rand() > 0.5: 
+        augment = False
 
     # load middle slice
     inputs_b, labels_b = data_files[idx]

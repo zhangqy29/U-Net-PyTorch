@@ -38,9 +38,9 @@ epochs = 100
 train_folder = 'data/train' 
 val_folder = 'data/val'
 
-print model_name
-print "augment="+str(augment)+" dropout="+str(dropout)
-print str(epochs) + " epochs - lr: " + str(lr) + " - batch size: " + str(batch_size)
+print(model_name)
+print ("augment="+str(augment)+" dropout="+str(dropout))
+print (str(epochs) + " epochs - lr: " + str(lr) + " - batch size: " + str(batch_size))
 
 # GPU enabled
 cuda = torch.cuda.is_available()
@@ -72,7 +72,7 @@ for key in patients.keys():
 
 # train loop
 
-print 'Start training...'
+print ('Start training...')
 
 for epoch in range(epochs):
 
@@ -166,6 +166,6 @@ for epoch in range(epochs):
     
 # save weights
 
-torch.save(net, "model_"+str(model_name)+".pht")
+torch.save(net, "model_"+str(model_name)+".pth")
 
 print 'Finished training...'
