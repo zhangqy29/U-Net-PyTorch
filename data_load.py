@@ -17,10 +17,10 @@ class LiverDataSet(data.Dataset):
     def __getitem__(self,index):
         img,label=self.data_files[index]
         img,label=np.load(os.path.join(self.train_data_path,img)), np.load(os.path.join(self.train_data_path,label))
+        label=label>=1             #liver region include the liver tumor region
         img=np.expand_dims(img,0)
-        label=np.expand_dims(label,0)
         
-        return (img,label)
+        return img,label
     
     def __len__(self):
         
