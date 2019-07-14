@@ -22,7 +22,7 @@ torch.backends.cudnn.benchmark=True
 parser=argparse.ArgumentParser(description='The parameters of UNet model')
 parser.add_argument('--train_data_path',type=str,default='/home/zhangqy/CT/data/LiTS17/Train/',help='train data path')
 parser.add_argument('--Epochs',type=int,default=10,help='number of epochs')
-parser.add_argument('--batch_size',type=int,default=64,help='batch size')
+parser.add_argument('--batch_size',type=int,default=8,help='batch size')
 parser.add_argument('--lr',type=float,default=1e-3,help='learning rate')
 parser.add_argument('-cuda',default=True,action='store_true',help='cuda')
 opt=parser.parse_args()
@@ -38,10 +38,12 @@ net=UNet(num_channels,num_classes)
 criterion=nn.NLLLoss()
 
 
+device=torch.device("cuda:0")
 if opt.cuda:
-    net=torch.nn.DataParallel(net,device_ids=[0,1]).cuda()
+    net.cuda(device)
     criterion.cuda()
 
+net=nn.DataParallel(net,device_ids=[0,1])
 
 optimizer=optim.Adam(net.parameters(),lr=opt.lr)
 
@@ -53,8 +55,10 @@ f.writelines(["Epoch\t","Batch\t","Loss\n"])
 batchs=len(train_loader)
 
 for ep in range(opt.Epochs):
-    for i , (img,label) in enumerate(train_loader):
-        img=img.cuda()
+    for i , data in enumerate(train_loader):
+        
+        img,label=data
+        img=img.float().cuda()
         label=label.cuda()
         
         prediction=net(img)
@@ -65,6 +69,8 @@ for ep in range(opt.Epochs):
         loss.backward()
         optimizer.step()
         
+        print('Epoch:[{}/{}]  Batch:[{}/{}]  Loss:{:0.4f}'.format(
+                ep+1,opt.Epochs,i+1,batchs,loss.item()))
         f.writelines(['[',str(ep+1),'/',str(opt.Epochs),']',"\t",'[',str(i+1),'/',str(batchs),']',"\t",str(loss.item()),"\n"])
         
 

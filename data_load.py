@@ -12,15 +12,18 @@ class LiverDataSet(data.Dataset):
         self.train_data_path=train_data_path
         self.data_files=os.listdir(train_data_path)
         self.data_files=natsort.natsorted(self.data_files)
-        self.data_file=list(zip(self.data_files[len(self.data_files)//2:],self.data_files[:len(self.data_files)//2]))
+        self.data_files=list(zip(self.data_files[len(self.data_files)//2:],self.data_files[:len(self.data_files)//2]))
     
     def __getitem__(self,index):
         img,label=self.data_files[index]
         img,label=np.load(os.path.join(self.train_data_path,img)), np.load(os.path.join(self.train_data_path,label))
-        label=label>=1             #liver region include the liver tumor region
+        img=np.clip(img,-100,400)
+        img=(img-img.min())/(img.max()-img.min())
         img=np.expand_dims(img,0)
         
-        return img,label
+        label=(label>=1).astype(np.uint8)             #liver region include the liver tumor region
+        
+        return (img,label)
     
     def __len__(self):
         
